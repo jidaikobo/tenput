@@ -1,0 +1,438 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <script src="lib/onsenui/js/onsenui.min.js"></script>
+
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/csstenput.css">
+
+    <script>
+        ons.ready(function() {
+            console.log("Onsen UI is ready!");
+        });
+
+// my script
+
+// グローバル変数 定数
+var  ASCX=0;
+var ASCF=0
+var ONE="";
+var ATX="";
+var TENF=0;
+
+var NMD=1; // 入力モード
+var KKF=false; // カタカナフラグ
+var CAPSF=false; // キャプスロックフラグ
+var KOGO=true;
+var KAKO=true; // かっこ・とじかっこ
+var KAGI=true; // かぎ・とじかぎ
+var TTID=0;
+const NMDTXD=[" ", "ひらがな", "カタカナ", "英字", "数字"];
+const XTX="ｘぁぃぅぇぉゃゅょっわをんいえー、。";
+const MATI=1300;
+
+// 文字データ
+var JI= new Array(10);
+// 0 ひらがな
+JI[0]="　あっいｘうおえｘかｘきｘくこけｘらーりｘるろれ、さ。しｘすそせわなｘにやぬのね「は？ひゆふほへをた！ちよつとてんま（みｘむもめ";
+// 1 拗音 きゃ きゅ きょ
+JI[1]="　ぁっぃｘぅぉぇｘきｘきｘきききｘりーりｘりりり、し。しｘしししわにｘにゃににに「ひ？ひゅひひひをち！ちょちちちんみ（みｘみみみゃｘぃｘぅぉぇ";
+// 2 くぁ　くぉ
+JI[2]="　うっうｘうううｘくｘくｘくくくｘるーるｘるるる、す。すｘすすすわぬｘぬやぬぬぬ「ふ？ふゆふふふをつ！つよつつつんむ（むｘむむむぁｘぃｘぅぉぇ";
+// 3 濁音 がぎぐげご
+JI[3]="　あっいｘうおえｘがｘぎｘぐごげｘらーりｘるろれ、ざ。じｘずぞぜわなｘにやぬのね「ば？びゆぶぼべをだ！ぢよづどでんま（みｘむもめ";
+// 4 英字 小文字
+JI[4]="　a,bｘcifｘｘｘｘｘｘ@ｘｘe-hｘdjg,ｘ.ｘｘｘwｘ'kｘl/msp_u?vｘxｘｘｘo!rｘntqｘz（ｘｘyｘｘ";
+// 5 数字
+JI[5]="　12243966時8分:月日+557804070円.-ｘ度階回3kｘl/msp9=?v年=ほへ8o!r*ntqんz（みｘyもめ";
+
+notta=function(tenX) {
+clearTimeout(TTID);
+
+var LTx="started";
+document.fo1.dekita.value=LTx;
+
+ ASCX=ASCX|tenX;
+tochukeka();
+
+TENF=tenX;
+ TTID=setTimeout(mojika, MATI);
+} // notta
+
+mojika=function() {
+// 入力モード
+var a=(TENF==32)&(ASCX==34);
+if (a) {modehenko(1);}
+var a=(TENF==2)&(ASCX==34);
+if (a) {modehenko(-1);}
+
+switch(NMD) {
+case 1: KKF=false; kana(); break;
+case 2: KKF=true; kana(); break;
+case 3: abcde(); break;
+case 4: suji(); break;
+} // switch
+
+
+} // mojika
+
+kana=function() {
+switch(ASCF) {
+case 4: kyakyukyo1(); kyakyukyo2(); break;
+case 20: kyakyukyo1(); dakuon(); kyakyukyo2(); break;
+case 10: qaqo1(); qaqo2(); break;
+case 16: tujoon(); dakuon(); break;
+case 8: papipupepo(); break;
+case 12: papipupepo(); kyakyukyo2(); break;
+
+default: tujoon(); break;
+}
+
+if (KKF) {var a=katakanaka(ONE); ONE=a;}
+
+hyoji();
+} // kana
+
+katakanaka=function(str) {
+    return str.replace(/[\u3041-\u3096]/g, function(match) {
+        var chr = match.charCodeAt(0) + 0x60;
+        return String.fromCharCode(chr);
+    });
+}
+
+hyoji=function() {
+if (ONE=="（") {
+if (KAKO) {KAKO=false;} else {KAKO=true; ONE="）"}
+} // （
+if (ONE=="「") {
+if (KAGI) {KAGI=false;} else {KAGI=true; ONE="」"}
+} // 「
+
+if (ONE!="ｘ") {
+var o=kigoyomi(ONE);
+document.fo1.chrue.value=o;
+document.fo1.chrsita.value=o;
+} // x
+var a=(ONE=="。")|(ONE=="〆");
+if (a) {itibunyomi();}
+kogofo();
+
+ASCF=ASCX;
+ASCX=0;
+
+if (ONE!="ｘ") {
+ATX=ATX+ONE;
+} // x
+
+var sen=ATX.replace(/。/g, "。</p><p>");
+var sen=sen.replace(/〆/g, "。</p><p>");
+var sen="<p>"+sen+"</p>";
+document.all.bunsyo.innerHTML=sen;
+
+} // hyoji
+
+tujoon=function() {
+var sen=JI[0];
+ONE=sen.charAt(ASCX);
+} // tujoon
+
+kyakyukyo1=function() {
+var sen=JI[1];
+ONE=sen.charAt(ASCX);
+} // kyakyukyo1
+kyakyukyo2=function() {
+var x=XTX.indexOf(ONE);
+if (x==-1) {
+
+var x=(ASCX&7)+63;
+var sen=JI[1];
+var a=sen.charAt(x);
+ONE=ONE+a;
+
+} // x -1
+} // kyakyukyo2
+
+qaqo1=function() {
+var sen=JI[2];
+ONE=sen.charAt(ASCX);
+} // qaqo1
+qaqo2=function() {
+var x=XTX.indexOf(ONE);
+if (x==-1) {
+
+var x=(ASCX&7)+63;
+var sen=JI[2];
+var a=sen.charAt(x);
+ONE=ONE+a;
+} // x -1
+} // qaqo2
+
+dakuon=function() {
+var sen=JI[0];
+var x=sen.indexOf(ONE);
+
+var sen=JI[3];
+ONE=sen.charAt(x);
+} // dakuon
+
+papipupepo=function() {
+var sen=JI[0];
+ONE=sen.charAt(ASCX);
+switch(ONE) {
+case "は": ONE="ぱ"; break;
+case "ひ": ONE="ぴ"; break;
+case "ふ": ONE="ぷ"; break;
+case "へ": ONE="ぺ"; break;
+case "ほ": ONE="ぽ"; break;
+}
+if (ASCF==12) {ONE="ぴ"}
+} // papipupepo
+
+abcde=function() {
+var sen=JI[4];
+var o=sen.charAt(ASCX);
+
+var a=((ASCF==8)|(ASCF==16))|(CAPSF);
+if (a) {ONE=o.toUpperCase();} else {ONE=o;}
+
+hyoji();
+} // abcde
+
+suji=function() {
+var sen=JI[5];
+ONE=sen.charAt(ASCX);
+
+hyoji();
+} // suji
+
+// その他の処理
+
+kogofo=function() {
+if (KOGO) {KOGO=false; document.fo1.chrue.focus();}
+else  {KOGO=true; document.fo1.chrsita.focus();}
+} // kogofo
+
+modehenko=function(hokoX) {
+// 1 ひらがな 2 カタカナ 3 英字 4 数字
+NMD=NMD+hokoX;
+if (NMD==0) {NMD=4;}
+if (NMD==5) {NMD=1;}
+
+TENF=-1;
+
+// var b=(NMD==3)&(CAPSF);
+var a=NMDTXD[NMD];
+// if (b) {var a=a+" 大文字";}
+document.fo1.chrue.value=a;
+document.fo1.chrsita.value=a;
+} // modehenko
+
+
+yameru=function() {
+var LTx="cleared";
+document.fo1.dekita.value=LTx;
+
+ ASCX=0
+// document.fo1.chr.value=ASCX;
+
+document.fo1.dekita.focus();
+} // yameru
+
+tochukeka=function() {
+var sen=""
+var a=ASCX&1; if (a==1) {var sen=sen+"1 ";}
+var a=ASCX&2; if (a==2) {var sen=sen+"2 ";}
+var a=ASCX&32; if (a==32) {var sen=sen+"3 ";}
+var a=ASCX&4; if (a==4) {var sen=sen+"4 ";}
+var a=ASCX&16; if (a==16) {var sen=sen+"5 ";}
+var a=ASCX&8; if (a==8) {var sen=sen+"6 ";}
+
+var sen=sen+"の点"
+
+document.fo1.chrue.value=sen;
+document.fo1.chrsita.value=sen;
+} // tochukeka
+
+tonton=function() {
+if (TENF==-1) {
+switch(NMD) {
+case 2: kaigyo(); break;
+case 3:
+if (CAPSF) {CAPSF=false; var a="小文字";}
+else {CAPSF=true; var a="英字 大文字";}
+document.fo1.chrue.value=a;
+document.fo1.chrsita.value=a;
+kogofo();
+break;
+
+} // switch
+
+} else {
+bspace();
+} // tenf
+} // tonton
+
+bspace=function() {
+if (ONE=="ｘ") {
+ASCF=0;
+} else {
+var sen=ATX;
+ATX=sen.substr(0, sen.length-1);
+
+var sen=ATX.replace(/。/g, "。<br />");
+var sen="<p>"+sen+"</p>";
+document.all.bunsyo.innerHTML=sen;
+} // x
+
+ONE="";
+var a=ATX.length;
+if (a!=0) {ONE=ATX.substr(ATX.length-1, 1);}
+
+var o=kigoyomi(ONE);
+document.fo1.chrue.value=o;
+document.fo1.chrsita.value=o;
+
+kogofo();
+} // bspace
+
+kaigyo=function() {
+ONE="〆";
+ASCX=0;
+hyoji();
+} // kaigyo
+
+kigoyomi=function(oneTx) {
+var r=oneTx
+switch(oneTx) {
+case "。": r="。 句点"; break;
+case "、": r="、 読点"; break;
+case "「": r="「 かぎ"; break;
+case "」": r="」 とじかぎ"; break;
+case "（": r="（ かっこ"; break;
+case "）": r="） とじかっこ"; break;
+case "〆": r="(改行)"; break;
+} // switch
+return r;
+} // kigoyomi
+
+itibunyomi=function() {
+var sen="。"+ATX;
+var sen=sen.replace(/〆/g, "。");
+var x=sen.lastIndexOf("。")+1;
+var a=sen.slice(x);
+
+document.fo1.chrue.value=a;
+document.fo1.chrsita.value=a;
+} // itibunyomi
+
+
+// tab2
+siageru=function() {
+var hb=document.fo2.honbun;
+
+var sen=ATX.replace(/。/g, "。\n");
+hb.value=sen;
+hb.selectionStart=0;
+hb.selectionEnd=hb.value.length;
+} // siageru
+
+
+    </script>
+</head>
+<body>
+    <ons-tabbar>
+      <ons-tab label="Tab 1" page="tab1.html" active>
+      </ons-tab>
+      <ons-tab label="Tab 2" page="tab2.html">
+      </ons-tab>
+    </ons-tabbar>
+
+    <ons-template id="tab1.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="center">Tab 1</div>
+        </ons-toolbar>
+
+        <p style="text-align: center;">
+          test is going. This is the first page.
+        </p>
+
+<form name="fo1">
+<p>
+<input type="button" name="chrue" value="not yet" onclick="tonton()"></p>
+
+<div class="tenji"><table>
+<tbody>
+<tr>
+<td>　　</td><td>
+上</td>
+<td>
+<input type="button" name="ten1" value="１" onfocus="notta(1)"></td>
+<td>
+　<input type="button" name="ten4" value="４" onfocus="notta(4)"></td></tr>
+
+<tr>
+<td>　　</td><td>
+中</td>
+<td>
+<input type="button" name="ten2" value="２" onfocus="notta(2)"></td>
+<td>
+　<input type="button" name="ten5" value="５" onfocus="notta(16)"></td></tr>
+
+<tr>
+<td>　　</td><td>
+下</td>
+<td>
+<input type="button" name="ten3" value="３" onfocus="notta(32)"></td>
+<td>
+　<input type="button" name="ten6" value="６" onfocus="notta(8)"></td></tr>
+
+</tbody></table></div>
+
+<p>
+<input type="button" name="chrsita" value="not yet" onclick="tonton()"></p>
+
+<h4>（テキスト）</h4>
+<div id="bunsyo" class="bun">
+<p>（空）</p></div>
+
+<p>
+<input type="button" name="dekita" value="not yet"></p>
+
+</form>
+
+
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="tab2.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="center">Tab 2</div>
+        </ons-toolbar>
+
+        <p style="text-align: center;">
+          This is the second page.
+        </p>
+
+<form name="fo2">
+<p>
+<input type="button" name="siage" value="仕上げる" onclick="siageru()"></p>
+
+<div>
+<textarea name="honbun"></textarea></div>
+
+</form>
+
+
+      </ons-page>
+    </ons-template>
+</body>
+</html>
