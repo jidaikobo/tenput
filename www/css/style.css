@@ -3,3 +3,34 @@
 .tenji {font-size:150%;}
 
 .tenji {font-size=150%;}
+
+
+input[name=chrue]
+{
+	position: fixed;
+	top: 200px;
+}
+input[name=chrshita]
+{
+	position: fixed;
+	top: 200px;
+}
+
+input[name=ten1],
+input[name=ten2],
+input[name=ten3],
+input[name=ten4],
+input[name=ten5],
+input[name=ten6]
+{
+	background-color: #fff;
+	border: 3px solid #000;
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+}
+
+div.tenji
+{
+	position: fixed;
+}
