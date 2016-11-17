@@ -51,18 +51,11 @@ JI[3]="　あっいｘうおえｘがｘぎｘぐごげｘらーりｘるろれ�
 // 4 英字 小文字
 JI[4]="　a,bｘcifｘｘｘｘｘｘ@ｘｘe-hｘdjg,ｘ.ｘｘｘwｘ'kｘl/msp_u?vｘxｘｘｘo!rｘntqｘz（ｘｘyｘｘ";
 // 5 数字
-JI[5]="　12243966時8分:月日+557804070円.-ｘ度階回3kｘl/msp9=?v年=ほへ8o!r*ntqんz（みｘyもめ";
+// JI[5]="　12243966時8分:月日+557804070円.-ｘ度階回3kｘl/msp9=?v年=ほへ8o!r*ntqんz（みｘyもめ";
+JI[5]="　12243966時8分:月日+55780407,円.-ｘ度階回3!ｘ"+'"'+"/#>&9=?・年×☆&8%!<*$♪'…●（～ｘ￥ｘｘ";
 
 notta=function(tenX) {
 clearTimeout(TTID);
-
-if (tenX == 1)
-{
-	$('input[name="ten1"]').css({color: '#FF0000'});
-}
-
-var LTx="started";
-document.fo1.dekita.value=LTx;
 
  ASCX=ASCX|tenX;
 tochukeka();
@@ -136,8 +129,11 @@ if (ONE!="ｘ") {
 ATX=ATX+ONE;
 } // x
 
-var sen=ATX.replace(/。/g, "。</p><p>");
-var sen=sen.replace(/〆/g, "。</p><p>");
+var sen=ATX;
+var sen=htmlmoji(sen);
+
+var sen=sen.replace(/。/g, "。</p><p>");
+var sen=sen.replace(/〆/g, "</p><p>");
 var sen="<p>"+sen+"</p>";
 document.all.bunsyo.innerHTML=sen;
 
@@ -240,16 +236,6 @@ document.fo1.chrsita.value=a;
 } // modehenko
 
 
-yameru=function() {
-var LTx="cleared";
-document.fo1.dekita.value=LTx;
-
- ASCX=0
-// document.fo1.chr.value=ASCX;
-
-document.fo1.dekita.focus();
-} // yameru
-
 tochukeka=function() {
 var sen=""
 var a=ASCX&1; if (a==1) {var sen=sen+"1 ";}
@@ -268,6 +254,7 @@ document.fo1.chrsita.value=sen;
 tonton=function() {
 if (TENF==-1) {
 switch(NMD) {
+case 1: spac(); break;
 case 2: kaigyo(); break;
 case 3:
 if (CAPSF) {CAPSF=false; var a="小文字";}
@@ -307,6 +294,12 @@ document.fo1.chrsita.value=o;
 kogofo();
 } // bspace
 
+spac=function() {
+if (CAPSF) {ONE="　";} else {ONE=" ";}
+ASCX=0;
+hyoji();
+} // spac
+
 kaigyo=function() {
 ONE="〆";
 ASCX=0;
@@ -323,7 +316,10 @@ case "」": r="」 とじかぎ"; break;
 case "（": r="（ かっこ"; break;
 case "）": r="） とじかっこ"; break;
 case "〆": r="(改行)"; break;
-} // switch
+
+case "　": r="　(全角スペース)"; break;
+case " ": r=" (スペース)"; break;
+c} // switch
 return r;
 } // kigoyomi
 
@@ -337,18 +333,39 @@ document.fo1.chrue.value=a;
 document.fo1.chrsita.value=a;
 } // itibunyomi
 
+htmlmoji=function(lTx) {
+var sen=lTx;
+
+var sen=sen.replace(/"/g, "&quot;");
+var sen=sen.replace(/&/g, "&amp;");
+var sen=sen.replace(/</g, "&lt;");
+var sen=sen.replace(/>/g, "&gt;");
+var sen=sen.replace(/ /g, "&nbsp");
+
+return sen;
+} // htmlmoji
+
 
 // tab2
 siageru=function() {
 var hb=document.fo2.honbun;
 
 var sen=ATX.replace(/。/g, "。\n");
+var sen=sen.replace(/〆/g, "\n");
 hb.value=sen;
 hb.selectionStart=0;
 hb.selectionEnd=hb.value.length;
 } // siageru
 
+tareakietaka=function() {
+var a=document.fo2.honbun.value;
+if (a=="") {
+ATX="";
+var sen="（空欄）";
+document.all.bunsyo.innerHTML=sen;
+} // a
 
+} // tareakietaka
     </script>
 </head>
 <body>
@@ -406,10 +423,32 @@ hb.selectionEnd=hb.value.length;
 
 <h4>（テキスト）</h4>
 <div id="bunsyo" class="bun">
-<p>（空）</p></div>
-
 <p>
-<input type="button" name="dekita" value="not yet"></p>
+ボイスオーバー(Voiceover)といっしょに使います。</p><p>
+点字のルールで、かな文字や英数の文章が書けます。</p><p>
+1　の点から　6　の点までの、6つのボタンがあります。</p><p>
+ボタンの位置間隔をつかんで、シングルタップします。</p><p>
+対応する文字が入力され、同時に読み上げます。</p><p>
+その文字でよければ、入力をつづけます。</p><p>
+その文字がちがうなら、ダブルタップすると削除されます。</p><p>
+さらにダブルタップをつづけると、さらに1文字ずつ削除されます。</p><p>
+2 ３　の点を入力すると、ひらがな、カタカナ、英字、数字が切り替わります。</p><p>
+切り替わった直後にダブルタップすると、それぞれ、スペース、改行、英字の大文字小文字、になります。</p><p>
+書きあがったら、仕上げるモードの方に進んでください。</p><p>
+
+独自の点字ルールを、いくつか採用しています。</p><p>
+ひらがなモード、カタカナモード</p><p>
+4 の点につづいて、あいうえお やゆよ、を書くと、小さいあいうえお やゆよ（ぁぃぅぇぉ ゃゅょ）が出ます。</p><p>
+2 5 6 の点による、ヴぁヴぃヴヴぇヴぉは書けません。</p><p>
+英字モード</p><p>
+4 6 の点で : （コロン）を、3 4 の点で / （スラッシュ）を、2 4 6 の点で @ （アットマーク）を書くことができます。</p><p>
+数字モード</p><p>
+点字で書くほかに、2 の点だけで 2 を書くこともできます。</p><p>3 から 6 も同様に書けます。</p><p>
+2 5 の点で 7 を、2 6 の点、あるいは 3 5 の点で 8 を、3 6 の点で 9 を書くこともできます。</p><p>
+4 5 の点で 0 を書くこともできます。</p><p>
+記号を書くことができます。</p><p>
+年 月 日 時 分 回 階 度 を書くことができます。</p><p>
+</p></div>
 
 </form>
 
@@ -432,7 +471,13 @@ hb.selectionEnd=hb.value.length;
 <input type="button" name="siage" value="仕上げる" onclick="siageru()"></p>
 
 <div>
-<textarea name="honbun"></textarea></div>
+<textarea name="honbun" onchange="tareakietaka()">
+「仕上げる」ボタンをダブルタップすると、書いた文章がテキストフィールドに入って全文選択の状態になります。
+すぐにコピーや切り取りが選べるときは、どちらかを行なうと、文章がペーストボードに行きます。
+コピーや切り取りのメニューが出ない場合は、ローターを編集にして、コピーや切り取りを行なってください。
+テキストフィールドの操作で、文章の修正を行なうこともできます。
+切り取りや削除を行なうと、これまでに入力した文章が消去されます。
+</textarea></div>
 
 </form>
 

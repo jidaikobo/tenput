@@ -4,7 +4,7 @@
 
 .tenji {font-size=150%;}
 
-
+/*
 input[name=chrue]
 {
 	position: fixed;
@@ -33,4 +33,9 @@ input[name=ten6]
 div.tenji
 {
 	position: fixed;
+}
+*/
+input[name=ten1]
+{
+	font-weight: bold;
 }
