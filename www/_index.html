@@ -54,9 +54,7 @@ JI[4]="　a,bｘcifｘｘｘｘｘｘ@ｘｘe-hｘdjg,ｘ.ｘｘｘwｘ'kｘl/ms
 // JI[5]="　12243966時8分:月日+557804070円.-ｘ度階回3kｘl/msp9=?v年=ほへ8o!r*ntqんz（みｘyもめ";
 JI[5]="　12243966時8分:月日+55780407,円.-ｘ度階回3!ｘ"+'"'+"/#>&9=?・年×☆&8%!<*$♪'…●（～ｘ￥ｘｘ";
 
-notta=function(tenX, event) {
-	console.log(event.target);
-	$(event.target).addClass('pushed');
+notta=function(tenX) {
 clearTimeout(TTID);
 
  ASCX=ASCX|tenX;
@@ -67,7 +65,6 @@ TENF=tenX;
 } // notta
 
 mojika=function() {
-	colorOut();
 // 入力モード
 var a=(TENF==32)&(ASCX==34);
 if (a) {modehenko(1);}
@@ -369,54 +366,79 @@ document.all.bunsyo.innerHTML=sen;
 } // a
 
 } // tareakietaka
-
-
-$(function()
-{
-	var bunsyo_height = $(window).height()-468-50;
-	$('#bunsyo').height(bunsyo_height);
-});
-
-function colorOut()
-{
-	$('.pushed').removeClass('pushed');
-}
-
     </script>
 </head>
 <body>
 	<ons-tabbar>
-		<ons-tab label="入力モード" page="tab1.html" active>
+		<ons-tab label="Tab 1" page="tab1.html" active>
 		</ons-tab>
-		<ons-tab label="仕上げモード" page="tab2.html">
+		<ons-tab label="Tab 2" page="tab2.html">
 		</ons-tab>
 	</ons-tabbar>
 
 	<ons-template id="tab1.html">
 		<ons-page>
 			<ons-toolbar>
-				<div class="center">入力モード</div>
+				<div class="center">Tab 1</div>
 			</ons-toolbar>
 
+			<p style="text-align: center;">
+			  This is the first page.
+			</p>
+
 <form name="fo1">
-	<input type="button" name="chrue" value="not yet" onclick="tonton()">
+	<p>
+		<input type="button" name="chrue" value="not yet" onclick="tonton()">
+	</p>
 
 	<div class="tenji">
 		<div class="up">上</div>
-		<input class="tenput" type="button" name="ten1" value="１" onfocus="notta(1, event)">
-		<input class="tenput" type="button" name="ten4" value="４" onfocus="notta(4, event)">
-
+						<input type="button" name="ten1" value="１" onfocus="notta(1)">
+					</td>
+					<td>
+						<input type="button" name="ten4" value="４" onfocus="notta(4)">
+		
 		<div class="middle">中</div>
-		<input class="tenput" type="button" name="ten2" value="２" onfocus="notta(2, event)">
-		<input class="tenput" type="button" name="ten5" value="５" onfocus="notta(16, event)">
-
 		<div class="down">下</div>
-		<input class="tenput" type="button" name="ten3" value="３" onfocus="notta(32, event)">
-		<input class="tenput" type="button" name="ten6" value="６" onfocus="notta(8, event)">
+
+		<table>
+			<tbody>
+				<tr>
+					<td>　　</td>
+					<td>上</td>
+					<td>
+						<input type="button" name="ten1" value="１" onfocus="notta(1)">
+					</td>
+					<td>
+						<input type="button" name="ten4" value="４" onfocus="notta(4)">
+					</td>
+				</tr>
+				<tr>
+					<td>　　</td>
+					<td>中</td>
+					<td>
+						<input type="button" name="ten2" value="２" onfocus="notta(2)"></td>
+					<td>
+						<input type="button" name="ten5" value="５" onfocus="notta(16)">
+					</td>
+				</tr>
+				<tr>
+					<td>　　</td>
+					<td>下</td>
+					<td>
+						<input type="button" name="ten3" value="３" onfocus="notta(32)">
+					</td>
+					<td>
+						<input type="button" name="ten6" value="６" onfocus="notta(8)">
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div><!-- .tenji -->
 
-	<input type="button" name="chrsita" value="not yet" onclick="tonton()">
-
+	<p>
+		<input type="button" name="chrsita" value="not yet" onclick="tonton()">
+	</p>
 
 <h4>（テキスト）</h4>
 <div id="bunsyo" class="bun">
@@ -458,8 +480,12 @@ function colorOut()
     <ons-template id="tab2.html">
       <ons-page>
         <ons-toolbar>
-          <div class="center">仕上げモード</div>
+          <div class="center">Tab 2</div>
         </ons-toolbar>
+
+        <p style="text-align: center;">
+          This is the second page.
+        </p>
 
 <form name="fo2">
 <p>
