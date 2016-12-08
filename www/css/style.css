@@ -49,12 +49,24 @@ input[name=chrsita]
 	background: none;
 	left: 50%;
 	width: 320px;
-	margin-left: -160px;
 	border: 0 none;
 	height: 64px;
 	line-height: 64px;
 	font-size: 20px;
 	background: url(../images/result_bg.png) no-repeat left 0 top 0;
+}
+input[name=chrue]
+{
+		margin-left: -160px;
+	width: 319px;
+	
+}
+input[name=chrsita]
+{
+		margin-left: 159px;
+			width: 1px;
+
+font-size: 0;
 }
 h4
 {
