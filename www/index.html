@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta charset="utf-8">
@@ -14,11 +14,8 @@
     <link rel="stylesheet" href="css/csstenput.css">
 
     <script>
-        ons.ready(function() {
-            console.log("Onsen UI is ready!");
-        });
-
 // my script
+
 
 // グローバル変数 定数
 var  ASCX=0;
@@ -37,7 +34,15 @@ var KAGI=true; // かぎ・とじかぎ
 var TTID=0;
 const NMDTXD=[" ", "ひらがな", "カタカナ", "英字", "数字"];
 const XTX="ｘぁぃぅぇぉゃゅょっわをんいえー、。";
+
+
+// localStorage keys
+const STORE_BUTTON_POSITION = "button_position";
+const STORE_INPUT_TIME      = "input_time";
 const MATI=1300; // 変数化して 時間を調整
+var mati = localStorage.getItem(STORE_INPUT_TIME);
+if (!mati) mati = MATI;
+mati = parseInt(mati); 
 
 // 文字データ
 var JI= new Array(10);
@@ -63,7 +68,8 @@ clearTimeout(TTID);
 tochukeka();
 
 TENF=tenX;
- TTID=setTimeout(mojika, MATI);
+console.log('mati' + mati);
+ TTID=setTimeout(mojika, mati);
 } // notta
 
 mojika=function() {
@@ -377,12 +383,71 @@ document.all.bunsyo.innerHTML=sen;
 } // tareakietaka
 
 
+// ons.bootstrap();
+
+/*
+ * init
+ */
 $(function()
 {
 	var bunsyo_height = $(window).height()-468-50;
-	$('#bunsyo').height(bunsyo_height);
+	$('#bunsyo').height(bunsyo_height);	
+	
+	applySetting();
 });
+ons.ready(function()
+{
+	var tab = $("#tabbar");
+	tab.on('postchange', function(event) {
+		console.log('tab change');
+		if (tabbar.getActiveTabIndex() == 0)
+		{
+			applySetting();
+		}
+		else if (tabbar.getActiveTabIndex() == 1)
+		{
+			inputSetting();
+		}
+  });
+});
+const TENJI_CENTER = -160;
+function applySetting()
+{
+	var setting = getSetting();
+	$('.tenji').css({marginLeft: (TENJI_CENTER+parseInt(setting[STORE_BUTTON_POSITION]))+'px'});
+	// global var
+	mati = parseInt(setting[STORE_INPUT_TIME]);
+}
+function inputSetting()
+{
+	var setting = getSetting();
+	var pos = document.getElementById('setting_button_position');
+	pos.value = parseInt(setting[STORE_BUTTON_POSITION]);
+	range = document.getElementById('setting_input_time');
+	range.value = parseInt(setting[STORE_INPUT_TIME]);
+}
+function settingSubmit()
+{
+	var pos = document.getElementById('setting_button_position');
+	var value = pos.value;	
+	localStorage.setItem(STORE_BUTTON_POSITION, value.toString());
+	range = document.getElementById('setting_input_time');
+	value = range.value;
+	localStorage.setItem(STORE_INPUT_TIME, value.toString());
+}
+function getSetting()
+{
+	var pos = localStorage.getItem(STORE_BUTTON_POSITION);
+	if (!pos) pos = 0;
+	// $('.tenji').css({marginLeft: (TENJI_CENTER+parseInt(pos))+'px'});
+	var time = localStorage.getItem(STORE_INPUT_TIME);
+	if (!time) time = MATI; // time default
 
+	var values = {}
+	values[STORE_BUTTON_POSITION] = pos;
+	values[STORE_INPUT_TIME]      = time;	
+	return values;
+}
 function colorOut()
 {
 	$('.pushed').removeClass('pushed');
@@ -391,7 +456,7 @@ function colorOut()
     </script>
 </head>
 <body>
-	<ons-tabbar>
+	<ons-tabbar id="tabbar" var="tabbar">
 		<ons-tab label="入力モード" page="tab1.html" active>
 		</ons-tab>
 		<ons-tab label="仕上げモード" page="tab2.html">
@@ -481,12 +546,33 @@ function colorOut()
 </textarea></div>
 
 </form>
-
+<div id="setting">
+	<h2>設定</h2>
 <!-- ボタン位置の左右 の調節 -->
-
+	<ons-row>ボタンの左右位置 (単位 ピクセル)</ons-row>
+    <ons-row>
+      <ons-col>
+        <ons-range id="setting_button_position" style="width:100%;" min="-100" max="100" step="10"></ons-range>
+      </ons-col>
+    </ons-row>
 <!-- 入力から反映まで -->
-
+	<ons-row>入力から反映までの待ち時間 (単位 ミリ秒)</ons-row>
+	<ons-row style="margin-top: 20px;">
+      <ons-col>
+        <ons-range id="setting_input_time" style="width: 100%;"  min="500" max="2500" step="250"></ons-range>
+      </ons-col>
+    </ons-row>
+<!-- 適用ボタン-->
+    <ons-row style="margin-top: 20px;">
+      <ons-col>
+        <ons-button onclick="settingSubmit()" modifier="large--cta" style="" value="">変更を適用</ons-button>
+      </ons-col>
+    </ons-row>
+    
+</div><!-- #setting -->
       </ons-page>
     </ons-template>
+
+	
 </body>
 </html>
