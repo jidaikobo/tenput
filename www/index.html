@@ -63,7 +63,7 @@ JI[2]="　うっうｘうううｘくｘくｘくくくｘるーるｘるるる�
 // 3 濁音 がぎぐげご
 JI[3]="　あっいｘヴおえｘがｘぎｘぐごげｘらーりｘるろれ、ざ。じｘずぞぜわなｘにやぬのね「ば？びゆぶぼべをだ！ぢよづどでんま（みｘむもめ";
 // 4 英字 小文字
-JI[4]="　a,b cifｘｘｘｘｘｘ@ｘｘe-hｘdjg,ｘ.ｘｘｘwｘ'kｘl/msp_u?v;xｘｘｘo!rｘntqｘz(ｘｘyｘｘ";
+JI[4]="　a,b cifｘｘｘｘ:ｘ@ｘｘe-hｘdjg,ｘ.ｘｘｘwｘ'kｘl/msp_u?v;xｘｘｘo!rｘntqｘz(ｘｘyｘｘ";
 // 5 数字
 JI[5]="　12243966時8分:月日+55780407,円.-ｘ度階回3!ｘ"+'"'+"/#>年9=?・;×☆&8%!<*$♪'…●(～ｘ￥ｘｘ";
 // 登録語句 飛ぶ用
@@ -828,6 +828,7 @@ ons.ready(function()
 		console.log('tab change');
 		if (tabbar.getActiveTabIndex() == 0)
 		{
+			settingSubmit();
 			applySetting();
 		}
 		else if (tabbar.getActiveTabIndex() == 1)
@@ -884,16 +885,16 @@ function colorOut()
 <body onload="hajimari()">
 
 	<ons-tabbar id="tabbar" var="tabbar">
-		<ons-tab label="入力モード" page="tab1.html" active>
+		<ons-tab label="入力モード画面" page="tab1.html" active>
 		</ons-tab>
-		<ons-tab label="仕上げモード" page="tab2.html">
+		<ons-tab label="仕上げるモード画面" page="tab2.html">
 		</ons-tab>
 	</ons-tabbar>
 
 	<ons-template id="tab1.html">
 		<ons-page>
 			<ons-toolbar>
-				<div class="center">入力モード</div>
+				<div class="center">入力モード画面</div>
 			</ons-toolbar>
 
 <form name="fo1">
@@ -929,7 +930,7 @@ function colorOut()
 さらにダブルタップをつづけると、さらに1文字ずつ削除されます。</p><p>
 2 ３　の点を入力すると、ひらがな、カタカナ、英字、数字が切り替わります。</p><p>
 切り替わった直後にダブルタップすると、それぞれ、スペース、改行、英字の大文字小文字、になります。</p><p>
-書きあがったら、仕上げるモードの方に進んでください。</p><p>
+書きあがったら、仕上げるモード画面の方に進んでください。</p><p>
 
 独自の点字ルールを、いくつか採用しています。</p><p>
 ひらがなモード、カタカナモード</p><p>
@@ -956,7 +957,7 @@ function colorOut()
     <ons-template id="tab2.html">
       <ons-page>
         <ons-toolbar>
-          <div class="center">仕上げモード</div>
+          <div class="center">仕上げるモード画面</div>
         </ons-toolbar>
 
 <form name="fo2">
@@ -1024,13 +1025,6 @@ function colorOut()
         <ons-range id="setting_input_time" style="width: 100%;"  min="500" max="2500" step="250"></ons-range>
       </ons-col>
     </ons-row>
-<!-- 適用ボタン-->
-    <ons-row style="margin-top: 20px;">
-      <ons-col>
-        <ons-button onclick="settingSubmit()" modifier="large--cta" style="" value="">変更を適用</ons-button>
-      </ons-col>
-    </ons-row>
-    
 </div><!-- #setting -->
       </ons-page>
     </ons-template>
