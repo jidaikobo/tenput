@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <html>
 <head>
     <meta charset="utf-8">
@@ -31,6 +31,14 @@ var KOGO=true;
 var KAKO=true; // かっこ・とじかっこ
 var HKAKO=true; // 半角かっこ・とじかっこ
 var KAGI=true; // かぎ・とじかぎ
+
+var KANJID= new Array(); // 漢字変換の配列
+var MONKUD= new Array(); // 登録文句の配列
+var MONF=false; // 登録語句モード
+var MONI=0; // 登録語句いんでっくす
+var MONJF=false // true だとあかさたなジャンプ
+
+
 var TTID=0;
 const NMDTXD=[" ", "ひらがな", "カタカナ", "英字", "数字"];
 const XTX="ｘぁぃぅぇぉゃゅょっわをんいえー、。";
@@ -53,11 +61,13 @@ JI[1]="　ぁっぃｘぅぉぇｘきｘきｘきききｘりーりｘりりり�
 // 2 くぁ　くぉ
 JI[2]="　うっうｘうううｘくｘくｘくくくｘるーるｘるるる、す。すｘすすすわぬｘぬやぬぬぬ「ふ？ふゆふふふをつ！つよつつつんむ（むｘむむむぁｘぃｘぅぉぇ";
 // 3 濁音 がぎぐげご
-JI[3]="　あっいｘうおえｘがｘぎｘぐごげｘらーりｘるろれ、ざ。じｘずぞぜわなｘにやぬのね「ば？びゆぶぼべをだ！ぢよづどでんま（みｘむもめ";
+JI[3]="　あっいｘヴおえｘがｘぎｘぐごげｘらーりｘるろれ、ざ。じｘずぞぜわなｘにやぬのね「ば？びゆぶぼべをだ！ぢよづどでんま（みｘむもめ";
 // 4 英字 小文字
 JI[4]="　a,b cifｘｘｘｘｘｘ@ｘｘe-hｘdjg,ｘ.ｘｘｘwｘ'kｘl/msp_u?v;xｘｘｘo!rｘntqｘz(ｘｘyｘｘ";
 // 5 数字
 JI[5]="　12243966時8分:月日+55780407,円.-ｘ度階回3!ｘ"+'"'+"/#>年9=?・;×☆&8%!<*$♪'…●(～ｘ￥ｘｘ";
+// 登録語句 飛ぶ用
+JI[6]="あかさたなはまやらわん";
 
 notta=function(tenX, event) {
 	console.log(event.target);
@@ -99,12 +109,15 @@ case 16: tujoon(); dakuon(); break;
 case 8: papipupepo(); break;
 case 12: papipupepo(); kyakyukyo2(); break;
 
-default: tujoon(); break;
-}
+default: tujoon();
+} // end switch
+
+if (TENF!=-2) {
 
 if (KKF) {var a=katakanaka(ONE); ONE=a;}
 
 hyoji();
+} // end if tenf
 } // kana
 
 katakanaka=function(str) {
@@ -204,7 +217,11 @@ case "ひ": ONE="ぴ"; break;
 case "ふ": ONE="ぷ"; break;
 case "へ": ONE="ぺ"; break;
 case "ほ": ONE="ぽ"; break;
-}
+
+default:
+if (ONE!="ｘ") {NMD=4; MONF=true; monkumode();} // 登録語句モードへ
+}// end switch
+
 if (ASCF==12) {ONE="ぴ"}
 } // papipupepo
 
@@ -220,6 +237,9 @@ hyoji();
 } // abcde
 
 suji=function() {
+if (MONF) {monkumode();} else {suji2();}
+} // for monf
+suji2=function() {
 var sen=JI[5];
 ONE=sen.charAt(ASCX);
 
@@ -240,14 +260,13 @@ if (NMD==0) {NMD=4;}
 if (NMD==5) {NMD=1;}
 
 TENF=-1;
-
+MONF=false;
 // var b=(NMD==3)&(CAPSF);
 var a=NMDTXD[NMD];
 // if (b) {var a=a+" 大文字";}
 document.fo1.chrue.value=a;
 document.fo1.chrsita.value=a;
 } // modehenko
-
 
 tochukeka=function() {
 var sen=""
@@ -277,19 +296,30 @@ document.fo1.chrsita.value=a;
 kogofo();
 break;
 
+case 4:
+if (MONF) {MONF=false; var a="数字";}
+else {MONF=true; MONI=-1; var a="登録文 登録語句";}
+
+document.fo1.chrue.value=a;
+document.fo1.chrsita.value=a;
+kogofo();
+break;
+
 } // switch
 
 } else {
-bspace();
-} // tenf
+if (TENF==-2) {monkukettei();} else {bspace();}
+} // tenf -1
 } // tonton
 
 bspace=function() {
 if (ONE=="ｘ") {
 ASCF=0;
 } else {
+var x=1;
+if (TENF==-3) {var x=ONE.length;; var rline="キャンセル、 "+ONE;}
 var sen=ATX;
-ATX=sen.substr(0, sen.length-1);
+ATX=sen.substr(0, sen.length-x);
 
 var sen=ATX.replace(/。/g, "。<br />");
 var sen="<p>"+sen+"</p>";
@@ -301,6 +331,7 @@ var a=ATX.length;
 if (a!=0) {ONE=ATX.substr(ATX.length-1, 1);}
 
 var o=kigoyomi(ONE);
+if (TENF==-3) {var o=rline; TENF=0;}
 document.fo1.chrue.value=o;
 document.fo1.chrsita.value=o;
 
@@ -365,7 +396,8 @@ return sen;
 siageru=function() {
 var hb=document.fo2.honbun;
 
-var sen=ATX.replace(/。/g, "。\n");
+var sen=kanjihenkan(ATX);
+var sen=sen.replace(/。/g, "。\n");
 var sen=sen.replace(/〆/g, "\n");
 hb.value=sen;
 hb.selectionStart=0;
@@ -375,12 +407,406 @@ hb.selectionEnd=hb.value.length;
 tareakietaka=function() {
 var a=document.fo2.honbun.value;
 if (a=="") {
+// 消えた
 ATX="";
 var sen="（空欄）";
 document.all.bunsyo.innerHTML=sen;
+
+document.fo2.kanjiadd.value="出力";
+document.fo2.monkuadd.value="出力";
+} else {
+// あった
+document.fo2.kanjiadd.value="追加";
+document.fo2.monkuadd.value="追加";
 } // a
 
 } // tareakietaka
+
+kanjihenkan=function(tx) {
+
+// 長いのを調べる
+var l=KANJID.length;
+var kl=0;
+var i;
+for (i=0; i<l; i++) {
+var rline=KANJID[i];
+
+var x=rline.indexOf("=");
+if (x>kl) {var kl=x;}
+
+} // next i
+
+// 変換
+var ntx=tx;
+var j;
+for (j=kl; j>0; j--) {
+for (i=0; i<l; i++) {
+var rline=KANJID[i];
+
+var x=rline.indexOf("=");
+if (x==j) {
+var mae=rline.substr(0, x);
+var ato=rline.substr(x+1);
+
+var ntx=ntx.replace(new RegExp(mae,"g"), ato);
+
+
+} // end if x j
+
+} // next i
+} // next j
+
+return ntx;
+} // kanjihenkan
+
+kanjisakujo=function() {
+var x=document.fo2.kanji.selectedIndex;
+var sen=KANJID[x]+" を削除します。よろしいですか?";
+if (window.confirm(sen)) {
+
+KANJID.splice(x, 1);
+// KANJID=KANJID.sort();
+
+kanjiF5();
+} // confirm
+} // kanjisakujo
+
+monkusakujo=function() {
+var x=document.fo2.monku.selectedIndex;
+var sen=MONKUD[x]+" を削除します。よろしいですか?";
+if (window.confirm(sen)) {
+
+MONKUD.splice(x, 1);
+// MONKUD=MONKUD.sort();
+
+monkuF5();
+} // confirm
+} // monkusakujo
+
+kanjituika=function() {
+var a=document.fo2.kanjiadd.value;
+if (a=="出力") {
+// 一覧を出力
+var hb=document.fo2.honbun;
+var l=KANJID.length;
+var i;
+var sen="漢字置換 合計 "+l+"\n";
+
+for (i=0; i<l; i++) {
+var sen=sen+KANJID[i]+"\n";
+} // next i
+
+hb.value=sen;
+hb.selectionStart=0;
+hb.selectionEnd=hb.value.length;
+
+} else {
+// 追加
+var a=document.fo2.honbun.value;
+var b=(a=="すべて=初期化")|(a=="すべて=初期化\n");
+if (b) {
+var sen="漢字置換のリストを初期化します。よろしいですか?";
+if (window.confirm(sen)) {
+localStorage.removeItem("KANJID");
+} // end if confirm
+
+} else {
+// 追加処理
+var kohod= new Array();
+var kohod=a.split("\n");
+
+var l=kohod.length;
+var i;
+// 数える
+var cou=0;
+var koho="";
+for (i=0; i<l; i++) {
+var rline=kohod[i];
+
+var x=rline.indexOf("=");
+var y=KANJID.indexOf(rline);
+var a=(x!=-1)&(y==-1);
+if (a) {
+
+var cou=cou+1;
+var koho=rline+" \n";
+} // end if rline
+} // next i
+
+var sen=cou+"個の語を追加します。よろしいですか?\n"+koho;
+if (window.confirm(sen)) {
+
+for (i=0; i<l; i++) {
+var rline=kohod[i];
+
+var x=rline.indexOf("=");
+var y=KANJID.indexOf(rline);
+var a=(x!=-1)&(y==-1);
+if (a) {
+
+KANJID.push(rline);
+} // end if rline
+} // next i
+} // end if confirm
+
+kanjiF5();
+} // end if b
+} // end if a kakidasu
+} // kanjituika
+
+monkutuika=function() {
+var a=document.fo2.monkuadd.value;
+if (a=="出力") {
+// 一覧を出力
+var hb=document.fo2.honbun;
+var l=MONKUD.length;
+var i;
+var sen="登録文、登録語句 合計 "+l+"\n";
+
+for (i=0; i<l; i++) {
+var sen=sen+MONKUD[i]+"\n";
+} // next i
+
+hb.value=sen;
+hb.selectionStart=0;
+hb.selectionEnd=hb.value.length;
+
+} else {
+// 追加
+var a=document.fo2.honbun.value;
+var b=(a=="すべて;初期化")|(a=="すべて;初期化\n");
+if (b) {
+var sen="登録分、登録語句のリストを初期化します。よろしいですか?";
+if (window.confirm(sen)) {
+localStorage.removeItem("MONKUD");
+} // end if confirm
+
+} else {
+// 追加処理
+var kohod= new Array();
+var kohod=a.split("\n");
+
+var l=kohod.length;
+var i;
+// 数える
+var cou=0;
+var koho="";
+for (i=0; i<l; i++) {
+var rline=kohod[i];
+
+var x=rline.indexOf(";");
+var y=MONKUD.indexOf(rline);
+var a=(x!=-1)&(y==-1);
+if (a) {
+
+var cou=cou+1;
+var koho=rline+" \n";
+} // end if rline
+} // next i
+
+var sen=cou+"個の語句を追加します。よろしいですか?\n"+koho;
+if (window.confirm(sen)) {
+
+for (i=0; i<l; i++) {
+var rline=kohod[i];
+
+var x=rline.indexOf(";");
+var y=MONKUD.indexOf(rline);
+var a=(x!=-1)&(y==-1);
+if (a) {
+
+MONKUD.push(rline);
+} // end if rline
+} // next i
+} // end if confirm
+
+monkuF5();
+} // end if b
+} // end if a kakidasu
+} // monkutuika
+
+kanjiF5=function() {
+KANJID=KANJID.sort();
+localStorage.setItem("KANJID", JSON.stringify(KANJID));
+
+var l=KANJID.length;
+document.fo2.kanji.length=l;
+var i;
+for (i=0; i<l; i++) {
+document.fo2.kanji.options[i].innerHTML=KANJID[i];
+} // next i
+} // kanjif5
+
+monkuF5=function() {
+MONKUD=MONKUD.sort();
+localStorage.setItem("MONKUD", JSON.stringify(MONKUD));
+
+var l=MONKUD.length;
+document.fo2.monku.length=l;
+var i;
+for (i=0; i<l; i++) {
+document.fo2.monku.options[i].innerHTML=MONKUD[i];
+} // next i
+} // monkuf5
+
+monkumode=function() {
+switch(ASCX) {
+case 4: monkumodoru(); break;
+case 16: monkususumu(); break;
+case 8: monkutobu(); break;
+
+default: monkujitobu();
+} // end switch
+
+ASCF=ASCX;
+ASCX=0;
+TENF=-2 // とんとんのときにこれで判定
+
+if (MONI<0) {MONI=MONKUD.length-1}
+if (MONI>=MONKUD.length) {MONI=0;}
+var a=MONKUD[MONI];
+var a=a.substr(2); // 表示は3文字目から
+document.fo1.chrue.value=a;
+document.fo1.chrsita.value=a;
+kogofo();
+} // monkumode
+
+monkususumu=function() {
+MONJF=false;
+
+MONI=MONI+1;
+} // monkususumu
+
+monkutobu=function() {
+MONJF=true;
+
+var rline=JI[6];
+var l=rline.length;
+var i;
+for (i=0; i<l; i++) {
+var o=rline.substr(i, 1);
+
+MONKUD.push(o);
+MONKUD=MONKUD.sort();
+var x=MONKUD.indexOf(o);
+MONKUD.splice(x, 1);
+
+if (MONI<x) {MONI=x; break;}
+} // next i
+} // monkutobu
+
+monkumodoru=function() {
+if (MONJF) {
+// ジャンプ
+if (MONI==0) {MONI=MONKUD.length;}
+
+var rline=JI[6];
+var l=rline.length-1;
+var i;
+for (i=l; i>-1; i--) {
+var o=rline.substr(i, 1);
+
+MONKUD.push(o);
+MONKUD=MONKUD.sort();
+var x=MONKUD.indexOf(o);
+MONKUD.splice(x, 1);
+
+if (x<MONI) {MONI=x; break;}
+} // next i
+
+} else {
+// 1つ
+MONI=MONI-1;
+} // end if monjf
+} // monkumodoru
+
+monkukettei=function() {
+var rline=MONKUD[MONI];
+var x=rline.indexOf(";");
+ONE=rline.substr(x+1);
+TENF=-3; // 取り消すときにこれで判定
+NMD=1
+
+hyoji();
+} // monkukettei
+
+monkujitobu=function() {
+var sen=JI[0];
+var o=sen.charAt(ASCX);
+
+if (o!="ｘ") {
+MONKUD.push(o);
+MONKUD=MONKUD.sort();
+MONI=MONKUD.indexOf(o);
+MONKUD.splice(MONI, 1);
+} // end if x
+} // monkujitobu
+xxhajimari=function() {
+var a=localStorage.getItem("KANJID");
+
+if (a==void 0) {
+sen="からっぽ";
+} else {
+sen="不明"
+
+KANJID=JSON.parse(a);
+
+var x=KANJID.length;
+var sen=sen+x;
+
+} // end if void 0
+
+document.fo2.honbun.value=sen;
+} // test hajimari
+
+hajimari=function() {
+// 漢字置換
+// 保存のチェック
+var a=localStorage.getItem("KANJID");
+if (a==void 0) {
+
+// デフォルトの読み込み
+var l=document.fo2.kanji.options.length;
+var i;
+for (i=0; i<l; i++) {
+
+var rline=document.fo2.kanji.options[i].innerHTML;
+var rline=rline.substr(1); // 1文字目の改行コードを除去
+KANJID.push(rline);
+
+} // next i
+
+} else {
+// あった
+KANJID=JSON.parse(a);
+} // end if void 0
+kanjiF5();
+
+// 登録文句
+// 保存のチェック
+var a=localStorage.getItem("MONKUD");
+if (a==void 0) {
+
+// デフォルトの読み込み
+var l=document.fo2.monku.options.length;
+var i;
+for (i=0; i<l; i++) {
+
+var rline=document.fo2.monku.options[i].innerHTML;
+var rline=rline.substr(1); // 1文字目の改行コードを除去
+MONKUD.push(rline);
+
+} // next i
+
+// document.fo2.honbun.value="きました";
+} else {
+// あった
+MONKUD=JSON.parse(a);
+} // end if void 0
+monkuF5();
+
+
+} // hajimari
 
 
 // ons.bootstrap();
@@ -455,7 +881,8 @@ function colorOut()
 
     </script>
 </head>
-<body>
+<body onload="hajimari()">
+
 	<ons-tabbar id="tabbar" var="tabbar">
 		<ons-tab label="入力モード" page="tab1.html" active>
 		</ons-tab>
@@ -474,7 +901,7 @@ function colorOut()
 
 	<div class="tenji">
 		<div class="up">上</div>
-		<input class="tenput" type="button" name="ten1" value="１" onfocus="notta(1, event)">
+		<input class="tenput" type="button" name="ten1" value="１" onfocus="notta(1, event)" onclick="notta(1, event)">
 		<input class="tenput" type="button" name="ten4" value="４" onfocus="notta(4, event)">
 
 		<div class="middle">中</div>
@@ -544,6 +971,41 @@ function colorOut()
 テキストフィールドの操作で、文章の修正を行なうこともできます。
 切り取りや削除を行なうと、これまでに入力した文章が消去されます。
 </textarea></div>
+
+
+
+<!-- 強化版 -->
+<h4>登録文、登録語句</h4>
+<div>
+<select name="monku"><option>
+あ;ありがとう。</option><option>
+あ;ありがとうございます。</option><option>
+お;おつかれさまでした。</option><option>
+こ;ごくろうさま</option><option>
+た;大丈夫</option><option>
+よ;よろしくおねがいします。</option><option>
+す;すべて;初期化</option>
+</select></div>
+
+<p>
+<input type="button" name="monkudel" value="削除" onclick="monkusakujo()"></p>
+<p>
+<input type="button" name="monkuadd" value="追加" onclick="monkutuika()"></p>
+
+<h4>漢字置換</h4>
+<div>
+<select name="kanji"><option>
+おもって=思って</option><option>
+おもった=思った</option><option>
+おもう=思う</option><option>
+おもいま=思いま</option><option>
+こでら=小寺</option>
+</select></div>
+
+<p>
+<input type="button" name="kanjidel" value="削除" onclick="kanjisakujo()"></p>
+<p>
+<input type="button" name="kanjiadd" value="追加" onclick="kanjituika()"></p>
 
 </form>
 <div id="setting">
