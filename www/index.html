@@ -42,7 +42,7 @@ var MONJF=false // true だとあかさたなジャンプ
 var TTID=0;
 const NMDTXD=[" ", "ひらがな", "カタカナ", "英字", "数字"];
 const XTX="ｘぁぃぅぇぉゃゅょっわをんいえー、。";
-
+const ZRTX="- 何も入っていません。";
 
 // localStorage keys
 const STORE_BUTTON_POSITION = "button_position";
@@ -219,7 +219,10 @@ case "へ": ONE="ぺ"; break;
 case "ほ": ONE="ぽ"; break;
 
 default:
-if (ONE!="ｘ") {NMD=4; MONF=true; monkumode();} // 登録語句モードへ
+var b=(document.fo2.monku6.checked);
+if (MONKUD[0]==ZRTX) {var b=false;}
+var a=((ONE!="ｘ")&(b));
+if (a) {NMD=4; MONF=true; monkumode();} // 登録語句モードへ
 }// end switch
 
 if (ASCF==12) {ONE="ぴ"}
@@ -396,6 +399,7 @@ return sen;
 siageru=function() {
 var hb=document.fo2.honbun;
 
+ATX="こでらです。おもいます。"
 var sen=kanjihenkan(ATX);
 var sen=sen.replace(/。/g, "。\n");
 var sen=sen.replace(/〆/g, "\n");
@@ -423,6 +427,8 @@ document.fo2.monkuadd.value="追加";
 } // tareakietaka
 
 kanjihenkan=function(tx) {
+var ntx=tx;
+if (KANJID[0]!=ZRTX) {
 
 // 長いのを調べる
 var l=KANJID.length;
@@ -437,7 +443,6 @@ if (x>kl) {var kl=x;}
 } // next i
 
 // 変換
-var ntx=tx;
 var j;
 for (j=kl; j>0; j--) {
 for (i=0; i<l; i++) {
@@ -448,15 +453,16 @@ if (x==j) {
 var mae=rline.substr(0, x);
 var ato=rline.substr(x+1);
 
-var ntx=ntx.replace(new RegExp(mae,"g"), ato);
-
+var ntx=ntx.replace(new RegExp(mae, "g"), ato);
 
 } // end if x j
 
 } // next i
 } // next j
 
+} // ZRTX
 return ntx;
+
 } // kanjihenkan
 
 kanjisakujo=function() {
@@ -465,6 +471,11 @@ var sen=KANJID[x]+" を削除します。よろしいですか?";
 if (window.confirm(sen)) {
 
 KANJID.splice(x, 1);
+
+// ゼロ対策
+var l=KANJID.length;
+if (l==0) {KANJID.push(ZRTX);}
+
 // KANJID=KANJID.sort();
 
 kanjiF5();
@@ -477,6 +488,11 @@ var sen=MONKUD[x]+" を削除します。よろしいですか?";
 if (window.confirm(sen)) {
 
 MONKUD.splice(x, 1);
+
+// ゼロ対策
+var l=MONKUD.length;
+if (l==0) {MONKUD.push(ZRTX);}
+
 // MONKUD=MONKUD.sort();
 
 monkuF5();
@@ -519,12 +535,15 @@ var l=kohod.length;
 var i;
 // 数える
 var cou=0;
+var scou=0; // 追加済み
 var koho="";
 for (i=0; i<l; i++) {
 var rline=kohod[i];
 
 var x=rline.indexOf("=");
 var y=KANJID.indexOf(rline);
+if (y!=-1) {var scou=scou+1;}
+
 var a=(x!=-1)&(y==-1);
 if (a) {
 
@@ -533,8 +552,11 @@ var koho=rline+" \n";
 } // end if rline
 } // next i
 
-var sen=cou+"個の語を追加します。よろしいですか?\n"+koho;
+var sen=cou+"個の語を追加します。よろしいですか?\n";
+if (scou!=0) {var sen=sen+"追加済み "+scou+"子ありました。\n";}
+var sen=sen+koho;
 if (window.confirm(sen)) {
+if (KANJID[0]==ZRTX) {KANJID.splice(0, 1);}
 
 for (i=0; i<l; i++) {
 var rline=kohod[i];
@@ -590,12 +612,15 @@ var l=kohod.length;
 var i;
 // 数える
 var cou=0;
+var scou=0; // 追加済み
 var koho="";
 for (i=0; i<l; i++) {
 var rline=kohod[i];
 
 var x=rline.indexOf(";");
 var y=MONKUD.indexOf(rline);
+if (y!=-1) {var scou=scou+1;}
+
 var a=(x!=-1)&(y==-1);
 if (a) {
 
@@ -604,8 +629,12 @@ var koho=rline+" \n";
 } // end if rline
 } // next i
 
-var sen=cou+"個の語句を追加します。よろしいですか?\n"+koho;
+var sen=cou+"個の語句を追加します。よろしいですか?\n";
+if (scou!=0) {var sen=sen+"追加済み "+scou+"子ありました。\n";}
+var sen=sen+koho;
 if (window.confirm(sen)) {
+
+if (MONKUD[0]==ZRTX) {MONKUD.splice(0, 1);}
 
 for (i=0; i<l; i++) {
 var rline=kohod[i];
@@ -1004,10 +1033,9 @@ function colorOut()
 	<ons-row>
 		<ons-col>
 			<select name="kanji"><option>
-			おもって=思って</option><option>
-			おもう=思う</option><option>
-			おもいま=思いま</option><option>
-			こでら=小寺</option>
+おもって=思って</option><option>
+おもう=思う</option><option>
+おもいま=思いま</option>
 			</select>
 		</ons-col>
 	</ons-row>
@@ -1027,13 +1055,32 @@ function colorOut()
 	<ons-row>
       <ons-col>
 		<select name="monku"><option>
-			あ;ありがとう。</option><option>
-			あ;ありがとうございます。</option><option>
-			お;おつかれさまでした。</option><option>
-			こ;ごくろうさま</option><option>
-			た;大丈夫</option><option>
-			よ;よろしくおねがいします。</option><option>
-			す;すべて;初期化</option>
+あ;ありがとう。</option><option>
+あ;ありがとうございます。</option><option>
+い;今、</option><option>
+お;おつかれさまでした。</option><option>
+か;午前</option><option>
+か;午後</option><option>
+こ;ごくろうさま</option><option>
+し;します。</option><option>
+た;大丈夫</option><option>
+ち;地下鉄</option><option>
+つ;着きます。</option><option>
+つ;着きました。</option><option>
+て;電話</option><option>
+て;電車</option><option>
+と;どこですか？</option><option>
+の;乗ります。</option><option>
+の;乗りました。</option><option>
+は;バス</option><option>
+め;メール</option><option>
+や;夜に</option><option>
+ら;ですか？</option><option>
+り;でした。</option><option>
+る;です。</option><option>
+れ;ですね。</option><option>
+ろ;でしょう。</option><option>
+よ;よろしくおねがいします。</option>
 			</select>
       </ons-col>
     </ons-row>
@@ -1047,6 +1094,7 @@ function colorOut()
 	<ons-row>
       <ons-col>
 		<input type="button" name="monkuadd" value="追加" onclick="monkutuika()">
+		<label><input type="checkbox" name="monku6" value="" checked>6の点の後にかなを書くと、登録語句の選択に飛ぶ。</label>
       </ons-col>
     </ons-row>	
 </div><!-- #setting -->
