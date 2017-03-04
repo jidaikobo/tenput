@@ -379,7 +379,7 @@ var tx=ptx;
 var ntx=tx;
 if (tx.length!=1) {
 var a=tx.substr(tx.length-1, 1);
-if (a=="。") {var ntx=ntx+" (句点)";}
+if (a=="。") {var ntx=ntx+" (句点)"; ATX=kanjihenkan(ATX);}
 if (a=="、") {var ntx=ntx+" (読点)";}
 } // tx 1
 
@@ -387,10 +387,13 @@ return ntx;
 } // matubikuten
 
 itibunyomi=function() {
+ATX=kanjihenkan(ATX);
+
 var sen="。"+ATX;
 var sen=sen.replace(/〆/g, "。");
 var x=sen.lastIndexOf("。")+1;
 var a=sen.slice(x);
+if (ONE=="。") {var a=a+"。 (句点)"}
 
 document.fo1.chrue.value=a;
 document.fo1.chrsita.value=a;
