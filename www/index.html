@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta charset="utf-8">
@@ -399,7 +399,6 @@ return sen;
 siageru=function() {
 var hb=document.fo2.honbun;
 
-ATX="こでらです。おもいます。"
 var sen=kanjihenkan(ATX);
 var sen=sen.replace(/。/g, "。\n");
 var sen=sen.replace(/〆/g, "\n");
@@ -1012,44 +1011,7 @@ function colorOut()
 
 
 <div id="setting">
-	<h2>設定</h2>
-<!-- ボタン位置の左右 の調節 -->
-	<ons-row>ボタンの左右位置 (単位 ピクセル)</ons-row>
-    <ons-row>
-      <ons-col>
-        <ons-range id="setting_button_position" style="width:100%;" min="-100" max="100" step="10"></ons-range>
-      </ons-col>
-    </ons-row>
-<!-- 入力から反映まで -->
-	<ons-row>入力から反映までの待ち時間 (単位 ミリ秒)</ons-row>
-	<ons-row style="margin-top: 20px;">
-      <ons-col>
-        <ons-range id="setting_input_time" style="width: 100%;"  min="500" max="2500" step="250"></ons-range>
-      </ons-col>
-    </ons-row>
-    
 
-    <h2>漢字変換</h2>
-	<ons-row>
-		<ons-col>
-			<select name="kanji"><option>
-おもって=思って</option><option>
-おもう=思う</option><option>
-おもいま=思いま</option>
-			</select>
-		</ons-col>
-	</ons-row>
-	<ons-row>
-      <ons-col>
-        <input type="button" name="kanjidel" value="削除" onclick="kanjisakujo()">
-      </ons-col>
-    </ons-row>
-    <ons-row>
-      <ons-col>
-        <input type="button" name="kanjiadd" value="追加" onclick="kanjituika()">
-      </ons-col>
-    </ons-row>
-	
 	<h2>登録文、登録語句</h2>
 	
 	<ons-row>
@@ -1097,6 +1059,45 @@ function colorOut()
 		<label><input type="checkbox" name="monku6" value="" checked>6の点の後にかなを書くと、登録語句の選択に飛ぶ。</label>
       </ons-col>
     </ons-row>	
+
+    <h2>漢字変換</h2>
+	<ons-row>
+		<ons-col>
+			<select name="kanji"><option>
+おもって=思って</option><option>
+おもう=思う</option><option>
+おもいま=思いま</option>
+			</select>
+		</ons-col>
+	</ons-row>
+	<ons-row>
+      <ons-col>
+        <input type="button" name="kanjidel" value="削除" onclick="kanjisakujo()">
+      </ons-col>
+    </ons-row>
+    <ons-row>
+      <ons-col>
+        <input type="button" name="kanjiadd" value="追加" onclick="kanjituika()">
+      </ons-col>
+    </ons-row>
+	
+	
+   	<h2>設定</h2>
+<!-- ボタン位置の左右 の調節 -->
+	<ons-row>ボタンの左右位置 (単位 ピクセル)</ons-row>
+    <ons-row>
+      <ons-col>
+        <ons-range id="setting_button_position" style="width:100%;" min="-100" max="100" step="10"></ons-range>
+      </ons-col>
+    </ons-row>
+<!-- 入力から反映まで -->
+	<ons-row>入力から反映までの待ち時間 (単位 ミリ秒)</ons-row>
+	<ons-row style="margin-top: 20px;">
+      <ons-col>
+        <ons-range id="setting_input_time" style="width: 100%;"  min="500" max="2500" step="250"></ons-range>
+      </ons-col>
+    </ons-row>
+    
 </div><!-- #setting -->
 
 </form>
