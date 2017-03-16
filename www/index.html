@@ -47,7 +47,7 @@ const ZRTX="- 何も入っていません。";
 // localStorage keys
 const STORE_BUTTON_POSITION = "button_position";
 const STORE_INPUT_TIME      = "input_time";
-const MATI=1300; // 変数化して 時間を調整
+const MATI=1500; // 変数化して 時間を調整
 var mati = localStorage.getItem(STORE_INPUT_TIME);
 if (!mati) mati = MATI;
 mati = parseInt(mati); 
@@ -141,6 +141,8 @@ if (KAGI) {KAGI=false;} else {KAGI=true; ONE="」"}
 if (ONE!="ｘ") {
 var o=kigoyomi(ONE);
 var o=matubikuten(o);
+var o=o.replace(/〆/g, " (改行) ");
+
 document.fo1.chrue.value=o;
 document.fo1.chrsita.value=o;
 } // x
@@ -321,7 +323,7 @@ if (ONE=="ｘ") {
 ASCF=0;
 } else {
 var x=1;
-if (TENF==-3) {var x=ONE.length;; var rline="キャンセル、 "+ONE;}
+if (TENF==-3) {var x=ONE.length;; var rline="キャンセル、 "+ONE.replace(/〆/g, " (改行) ");}
 var sen=ATX;
 ATX=sen.substr(0, sen.length-x);
 
@@ -709,10 +711,12 @@ TENF=-2 // とんとんのときにこれで判定
 
 if (MONI<0) {MONI=MONKUD.length-1}
 if (MONI>=MONKUD.length) {MONI=0;}
-var a=MONKUD[MONI];
-var a=a.substr(2); // 表示は3文字目から
-document.fo1.chrue.value=a;
-document.fo1.chrsita.value=a;
+var o=MONKUD[MONI];
+var o=o.substr(2); // 表示は3文字目から
+var o=o.replace(/〆/g, " (改行) ");
+
+document.fo1.chrue.value=o;
+document.fo1.chrsita.value=o;
 kogofo();
 } // monkumode
 
@@ -924,7 +928,28 @@ function colorOut()
 {
 	$('.pushed').removeClass('pushed');
 }
-
+applymail=function()
+{
+	var address = '';
+	var subject = '';
+	var body = '';
+	body = document.fo2.honbun.value;
+	if ( monaca.isAndroid )
+	{
+		window.plugins.webintent.startActivity(
+			{
+				action: window.plugins.webintent.ACTION_VIEW,
+				url: 'mailto:' + address + '?subject=' + subject + '&body=' + body + ''
+			},
+			function() {},
+			function() {alert('Failed to open URL via Android Intent')}
+		);
+	}
+	else
+	{
+		var ref = cordova.InAppBrowser.open('mailto:' + address + '?subject=' + subject + '&body=' + body + '', '_system');
+	}
+}
     </script>
 </head>
 <body onload="hajimari()">
@@ -1010,6 +1035,7 @@ function colorOut()
 <input type="button" name="siage" value="仕上げる" onclick="siageru()"></p>
 
 
+
     <form name="fo2">
     
 <div>
@@ -1029,6 +1055,7 @@ function colorOut()
 
 <div id="setting">
 
+
 	<h2>登録文、登録語句</h2>
 	
 	<ons-row>
@@ -1036,30 +1063,55 @@ function colorOut()
 		<select name="monku"><option>
 あ;ありがとう。</option><option>
 あ;ありがとうございます。</option><option>
+あ;明日</option><option>
 い;今、</option><option>
+い;行きましょう</option><option>
+い;行ってきます</option><option>
+う;土曜日</option><option>
+う;日曜日</option><option>
+う;月曜日</option><option></option><option>
+う;木曜日</option><option>
+う;水曜日</option><option>
+う;火曜日</option><option>
+う;金曜日</option><option>
+え;駅</option><option>
 お;おつかれさまでした。</option><option>
-か;午前</option><option>
-か;午後</option><option>
+か;帰り道</option><option>
+き;今日</option><option>
+き;昨日</option><option>
+こ;こんにちは</option><option>
+こ;こんばんは</option><option>
 こ;ごくろうさま</option><option>
-し;します。</option><option>
+こ;午前</option><option>
+こ;午後</option><option>
+た;タクシー</option><option>
 た;大丈夫</option><option>
 ち;地下鉄</option><option>
-つ;着きます。</option><option>
 つ;着きました。</option><option>
+つ;着きます。</option><option>
 て;電話</option><option>
 て;電車</option><option>
 と;どこですか？</option><option>
-の;乗ります。</option><option>
-の;乗りました。</option><option>
+な;中</option><option>
+に;に乗ります。</option><option>
+ぬ;に乗りました。</option><option>
 は;バス</option><option>
+は;バスに乗りました。よろしくおねがいします。</option><option>
+へ;Re: </option><option>
+へ;返信</option><option>
+ま;前</option><option>
 め;メール</option><option>
 や;夜に</option><option>
-ら;ですか？</option><option>
+よ;よろしくおねがいします。</option><option>
+ら;ですか？〆</option><option>
 り;でした。</option><option>
 る;です。</option><option>
 れ;ですね。</option><option>
 ろ;でしょう。</option><option>
-よ;よろしくおねがいします。</option>
+わ;ます。</option><option>
+を;ました。</option><option>
+を;ましたか?〆</option><option>
+を;ますか?〆</option>
 			</select>
       </ons-col>
     </ons-row>
@@ -1081,6 +1133,8 @@ function colorOut()
 	<ons-row>
 		<ons-col>
 			<select name="kanji"><option>
+いってきま=行ってきま</option><option>
+いきま=行きま</option><option>
 おもって=思って</option><option>
 おもう=思う</option><option>
 おもいま=思いま</option>
@@ -1114,7 +1168,10 @@ function colorOut()
         <ons-range id="setting_input_time" style="width: 100%;"  min="500" max="2500" step="250"></ons-range>
       </ons-col>
     </ons-row>
-    
+
+<p>
+<input type="button" name="mail" value="メールに貼り付け" onclick="applymail()"></p>
+
 </div><!-- #setting -->
 
 </form>
