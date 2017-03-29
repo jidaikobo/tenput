@@ -217,6 +217,18 @@ textarea[name=honbun]
 	background-color: #f0f0ed;
 }
 
+#mail_wrapper
+{
+	position: absolute;
+	top: 350px; /* 280 + 100 + 64 + 20 */
+	overflow: scroll;
+	line-height: 1.5;
+	width: 90%;
+	text-align: center;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
 #setting
 {
 	position: absolute;
