@@ -168,16 +168,23 @@ input[name=ten6]
 }
 /*
  * left
- */
+
 input[name=ten1],
 input[name=ten2],
 input[name=ten3]
+*/
+.tenji         input.tenput.left,
+.tenji.reverse input.tenput.right
 {
 	left: 70px;
 }
+/*
 input[name=ten4],
 input[name=ten5],
 input[name=ten6]
+*/
+.tenji         input.tenput.right,
+.tenji.reverse input.tenput.left
 {
 	left: 176px;
 }

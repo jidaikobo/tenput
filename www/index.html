@@ -46,7 +46,9 @@ const ZRTX="- 何も入っていません。";
 
 // localStorage keys
 const STORE_BUTTON_POSITION = "button_position";
+const STORE_BUTTON_REVERSE = "button_reverse";
 const STORE_INPUT_TIME      = "input_time";
+const STORE_MONKU6_CHECKED  = "monku6_checked";
 const MATI=1500; // 変数化して 時間を調整
 var mati = localStorage.getItem(STORE_INPUT_TIME);
 if (!mati) mati = MATI;
@@ -222,7 +224,16 @@ case "へ": ONE="ぺ"; break;
 case "ほ": ONE="ぽ"; break;
 
 default:
-var b=(document.fo2.monku6.checked);
+
+//var b=(document.fo2.monku6.checked;
+var b;
+var checkbox_monku6_element = document.getElementById('checkbox_monku6');
+if (checkbox_monku6_element.checked) {
+	b = true;
+} else {
+	b = false;
+}
+
 if (MONKUD[0]==ZRTX) {var b=false;}
 var a=((ONE!="ｘ")&(b));
 if (a) {NMD=4; MONF=true; monkumode();} // 登録語句モードへ
@@ -884,7 +895,17 @@ ons.ready(function()
 		{
 			inputSetting();
 		}
-  });
+ 	});
+ 	
+ 	// mnku6 の check は切り替わるてびに保存する
+ 	document.getElementById('checkbox_monku6').onchange = function()
+ 	{
+ 		if (document.getElementById('checkbox_monku6').checked) {
+			localStorage.setItem(STORE_MONKU6_CHECKED, 1);
+		} else {
+			localStorage.setItem(STORE_MONKU6_CHECKED, 0);
+		}
+ 	}
 });
 const TENJI_CENTER = -160;
 function applySetting()
@@ -893,35 +914,75 @@ function applySetting()
 	$('.tenji').css({marginLeft: (TENJI_CENTER+parseInt(setting[STORE_BUTTON_POSITION]))+'px'});
 	// global var
 	mati = parseInt(setting[STORE_INPUT_TIME]);
+	
+	if (parseInt(setting[STORE_BUTTON_REVERSE])) {
+		$('.tenji').addClass('reverse');
+	} else {
+		$('.tenji').removeClass('reverse');
+	}
 }
 function inputSetting()
 {
 	var setting = getSetting();
+	
 	var pos = document.getElementById('setting_button_position');
+	console.log("parseInt(setting[STORE_BUTTON_POSITION])");
+	console.log(parseInt(setting[STORE_BUTTON_POSITION]));
 	pos.value = parseInt(setting[STORE_BUTTON_POSITION]);
+	
+	var rev = document.getElementById('setting_button_reverse');
+	rev.value = setting[STORE_BUTTON_REVERSE];
+	
 	range = document.getElementById('setting_input_time');
 	range.value = parseInt(setting[STORE_INPUT_TIME]);
+	
+	var monku6_checked = parseInt(setting[STORE_MONKU6_CHECKED]);
+	if (monku6_checked){
+		document.getElementById('checkbox_monku6').checked = true;
+	} else {
+		document.getElementById('checkbox_monku6').checked = false;
+	}
 }
 function settingSubmit()
 {
 	var pos = document.getElementById('setting_button_position');
 	var value = pos.value;	
 	localStorage.setItem(STORE_BUTTON_POSITION, value.toString());
+	
 	range = document.getElementById('setting_input_time');
 	value = range.value;
 	localStorage.setItem(STORE_INPUT_TIME, value.toString());
+	
+	var button_reverse = document.getElementById('setting_button_reverse');
+
+	if (button_reverse.checked) {
+		value = 1;
+	} else {
+		value = 0;
+	}
+
+	localStorage.setItem(STORE_BUTTON_REVERSE, value);
 }
 function getSetting()
 {
 	var pos = localStorage.getItem(STORE_BUTTON_POSITION);
 	if (!pos) pos = 0;
 	// $('.tenji').css({marginLeft: (TENJI_CENTER+parseInt(pos))+'px'});
+	
 	var time = localStorage.getItem(STORE_INPUT_TIME);
 	if (!time) time = MATI; // time default
+	
+	var monku6_checked = localStorage.getItem(STORE_MONKU6_CHECKED);
+	if (!monku6_checked) monku6_checked = 0;
+
+	var button_reverse = localStorage.getItem(STORE_BUTTON_REVERSE);
+	if (!button_reverse) button_reverse = 0;
 
 	var values = {}
 	values[STORE_BUTTON_POSITION] = pos;
-	values[STORE_INPUT_TIME]      = time;	
+	values[STORE_INPUT_TIME]      = time;
+	values[STORE_BUTTON_REVERSE]  = button_reverse;
+	values[STORE_MONKU6_CHECKED]  = monku6_checked;
 	return values;
 }
 function colorOut()
@@ -964,6 +1025,12 @@ applymail=function()
 		var ref = cordova.InAppBrowser.open('mailto:' + address + '?subject=' + subject + '&body=' + body.replace(/\n/g, "%0d%0a") + '', '_system');
 	}
 }
+
+var openBrowser = function(url)
+{
+	// window.open(encodeURI(url), '_blank', 'location=yes'); // アプリ内で開く
+	window.open(encodeURI(url), '_system');
+}
     </script>
 </head>
 <body onload="hajimari()">
@@ -986,16 +1053,16 @@ applymail=function()
 
 	<div class="tenji">
 		<div class="up">上</div>
-		<input class="tenput" type="button" name="ten1" value="１" onfocus="notta(1, event)" onclick="notta(1, event)">
-		<input class="tenput" type="button" name="ten4" value="４" onfocus="notta(4, event)" onclick="notta(4, event)">
+		<input class="tenput left" type="button" name="ten1" value="１" onfocus="notta(1, event)" onclick="notta(1, event)">
+		<input class="tenput right" type="button" name="ten4" value="４" onfocus="notta(4, event)" onclick="notta(4, event)">
 
 		<div class="middle">中</div>
-		<input class="tenput" type="button" name="ten2" value="２" onfocus="notta(2, event)" onclick="notta(2, event)">
-		<input class="tenput" type="button" name="ten5" value="５" onfocus="notta(16, event)" onclick="notta(16, event)">
+		<input class="tenput left" type="button" name="ten2" value="２" onfocus="notta(2, event)" onclick="notta(2, event)">
+		<input class="tenput right" type="button" name="ten5" value="５" onfocus="notta(16, event)" onclick="notta(16, event)">
 
 		<div class="down">下</div>
-		<input class="tenput" type="button" name="ten3" value="３" onfocus="notta(32, event)" onclick="notta(32, event)">
-		<input class="tenput" type="button" name="ten6" value="６" onfocus="notta(8, event)" onclick="notta(8, event)">
+		<input class="tenput left" type="button" name="ten3" value="３" onfocus="notta(32, event)" onclick="notta(32, event)">
+		<input class="tenput right" type="button" name="ten6" value="６" onfocus="notta(8, event)" onclick="notta(8, event)">
 	</div><!-- .tenji -->
 
 	<input type="button" name="chrsita" value="not yet" onclick="tonton()">
@@ -1085,7 +1152,7 @@ applymail=function()
 い;行ってきます</option><option>
 う;土曜日</option><option>
 う;日曜日</option><option>
-う;月曜日</option><option></option><option>
+う;月曜日</option><option>
 う;木曜日</option><option>
 う;水曜日</option><option>
 う;火曜日</option><option>
@@ -1141,8 +1208,17 @@ applymail=function()
 	<ons-row>
       <ons-col>
 		<input type="button" name="monkuadd" value="追加" onclick="monkutuika()">
-		<label><input type="checkbox" name="monku6" value="" checked>6の点の後にかなを書くと、登録語句の選択に飛ぶ。</label>
-      </ons-col>
+    </ons-row>	
+
+	<ons-row>
+		<ons-col>
+			6の点の後にかなを書くと、登録語句の選択に飛ぶ。
+		</ons-col>
+    </ons-row>	
+	<ons-row>
+		<ons-col>
+			<ons-switch id="checkbox_monku6" name="monku6"></ons-switch>
+		</ons-col>
     </ons-row>	
 
     <h2>漢字変換</h2>
@@ -1177,6 +1253,13 @@ applymail=function()
         <ons-range id="setting_button_position" style="width:100%;" min="-100" max="100" step="10"></ons-range>
       </ons-col>
     </ons-row>
+    <ons-row>ボタンの左右を反転</ons-row>
+    <ons-row>
+      <ons-col>
+     	<ons-switch id="setting_button_reverse"></ons-switch>
+      </ons-col>
+    </ons-row>
+    
 <!-- 入力から反映まで -->
 	<ons-row>入力から反映までの待ち時間 (単位 ミリ秒)</ons-row>
 	<ons-row style="margin-top: 20px;">
@@ -1185,9 +1268,15 @@ applymail=function()
       </ons-col>
     </ons-row>
 
+
+<p id="support">
+<a onclick="openBrowser('http://www.jidaikobo.com/tenput.html')" href="javascript:void(0)" class="url">点プット - サポートページ</a><br />
+</p>
 </div><!-- #setting -->
 
 </form>
+
+
 
 
       </ons-page>
